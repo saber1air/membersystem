@@ -5,60 +5,61 @@ import com.deliver.model.BaseObject;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by pdl on 2018/9/13.
  */
 
 @Entity
-@Table(name="tc_grade_info")
-public class GradeInfo extends BaseObject implements Serializable {
+@Table(name="tc_notice")
+public class Notice extends BaseObject implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer gradeID;
+    private Integer noticeID;
+
+    @Column(length = 1000,nullable=true)
+    private String noticeContent;
+
+    @Column(length = 255,nullable=true)
+    private String accessoryPath;
 
     @Column(nullable=true)
-    private Integer gradeNum;
-    @Column(length = 20,nullable=true)
-    private String gradeName;
-    @Column(nullable=true)
     private Integer schoolID;
+
     @Column(nullable=true)
     private Date createTime;
     @Column(nullable=true)
     private Date updateTime;
     @Column(columnDefinition="int default 0",nullable=true)
     private Integer deleteFlag=0;
+
+    @Column(columnDefinition="int default 0",nullable=true)
+    private Integer noticeType=0;
     @Column(nullable=true)
     private String remarks;
 
-
-    @Transient
-    private List<ClassInfo> classInfoList;
-
-    public Integer getGradeID() {
-        return gradeID;
+    public Integer getNoticeID() {
+        return noticeID;
     }
 
-    public void setGradeID(Integer gradeID) {
-        this.gradeID = gradeID;
+    public void setNoticeID(Integer noticeID) {
+        this.noticeID = noticeID;
     }
 
-    public Integer getGradeNum() {
-        return gradeNum;
+    public String getNoticeContent() {
+        return noticeContent;
     }
 
-    public void setGradeNum(Integer gradeNum) {
-        this.gradeNum = gradeNum;
+    public void setNoticeContent(String noticeContent) {
+        this.noticeContent = noticeContent;
     }
 
-    public String getGradeName() {
-        return gradeName;
+    public String getAccessoryPath() {
+        return accessoryPath;
     }
 
-    public void setGradeName(String gradeName) {
-        this.gradeName = gradeName;
+    public void setAccessoryPath(String accessoryPath) {
+        this.accessoryPath = accessoryPath;
     }
 
     public Integer getSchoolID() {
@@ -101,24 +102,25 @@ public class GradeInfo extends BaseObject implements Serializable {
         this.remarks = remarks;
     }
 
-    public List<ClassInfo> getClassInfoList() {
-        return classInfoList;
+    public Integer getNoticeType() {
+        return noticeType;
     }
 
-    public void setClassInfoList(List<ClassInfo> classInfoList) {
-        this.classInfoList = classInfoList;
+    public void setNoticeType(Integer noticeType) {
+        this.noticeType = noticeType;
     }
 
     @Override
     public String toString() {
-        return "Grade{" +
-                "gradeID=" + gradeID +
-                ", gradeNum=" + gradeNum +
-                ", gradeName='" + gradeName + '\'' +
+        return "Notice{" +
+                "noticeID=" + noticeID +
+                ", noticeContent='" + noticeContent + '\'' +
+                ", accessoryPath='" + accessoryPath + '\'' +
                 ", schoolID=" + schoolID +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", deleteFlag=" + deleteFlag +
+                ", noticeType=" + noticeType +
                 ", remarks='" + remarks + '\'' +
                 '}';
     }

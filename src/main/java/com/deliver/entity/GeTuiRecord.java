@@ -11,44 +11,34 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name="tc_parent_student_rel")
-public class ParenStudentRel extends BaseObject implements Serializable {
+@Table(name="tc_getui_record")
+public class GeTueRecord extends BaseObject implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer relid;
-    @Column(nullable=true)
-    private Integer homeID; //家长主帐号的ID
+    private Integer getuiID;
+
     @Column(nullable=true)
     private Integer humanID;
 
     @Column(nullable=true)
-    private Date createTime;
-    @Column(nullable=true)
-    private Date updateTime;
+    private Date getuiTime;
+    @Column(length = 100,nullable=true)
+    private String message;
+
     @Column(columnDefinition="int default 0",nullable=true)
     private Integer deleteFlag=0;
     @Column(nullable=true)
     private String remarks;
-    @Column(columnDefinition="int default 0",nullable=true)
-    private Integer checkFlag=0;
 
     @Column(nullable=true)
     private Integer schoolID;
 
-    public Integer getRelid() {
-        return relid;
+    public Integer getGetuiID() {
+        return getuiID;
     }
 
-    public void setRelid(Integer relid) {
-        this.relid = relid;
-    }
-
-    public Integer getHomeID() {
-        return homeID;
-    }
-
-    public void setHomeID(Integer homeID) {
-        this.homeID = homeID;
+    public void setGetuiID(Integer getuiID) {
+        this.getuiID = getuiID;
     }
 
     public Integer getHumanID() {
@@ -59,20 +49,20 @@ public class ParenStudentRel extends BaseObject implements Serializable {
         this.humanID = humanID;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Date getGetuiTime() {
+        return getuiTime;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setGetuiTime(Date getuiTime) {
+        this.getuiTime = getuiTime;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public String getMessage() {
+        return message;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Integer getDeleteFlag() {
@@ -91,14 +81,6 @@ public class ParenStudentRel extends BaseObject implements Serializable {
         this.remarks = remarks;
     }
 
-    public Integer getCheckFlag() {
-        return checkFlag;
-    }
-
-    public void setCheckFlag(Integer checkFlag) {
-        this.checkFlag = checkFlag;
-    }
-
     public Integer getSchoolID() {
         return schoolID;
     }
@@ -109,15 +91,13 @@ public class ParenStudentRel extends BaseObject implements Serializable {
 
     @Override
     public String toString() {
-        return "ParenStudentRel{" +
-                "relid=" + relid +
-                ", homeID=" + homeID +
+        return "GeTueRecord{" +
+                "getuiID=" + getuiID +
                 ", humanID=" + humanID +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
+                ", getuiTime=" + getuiTime +
+                ", message='" + message + '\'' +
                 ", deleteFlag=" + deleteFlag +
                 ", remarks='" + remarks + '\'' +
-                ", checkFlag=" + checkFlag +
                 ", schoolID=" + schoolID +
                 '}';
     }

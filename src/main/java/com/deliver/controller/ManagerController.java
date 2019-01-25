@@ -395,11 +395,27 @@ public class ManagerController {
 
                 List<HumanMedia> humanMediaList = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlag(human.getHumanID(),0,1);
 
-                if(humanMediaList!=null && humanMediaList.size()>0){
-                    for(HumanMedia media:humanMediaList){
-                        media.setDeleteFlag(1);
-                        media.setUpdateTime(new Date());
-                        humanMediaService.delMedia(media);
+                if(humanMediaList!=null && humanMediaList.size()==1){
+                    if(humanMediaList.get(0).getFeature()==null){
+                        for(HumanMedia media:humanMediaList){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.setMediaShow(media);
+                        }
+                    }else{
+                        for(HumanMedia media:humanMediaList){
+                            media.setShowFlag(0);
+                            humanMediaService.setMediaShow(media);
+                        }
+                    }
+                }else if(humanMediaList!=null && humanMediaList.size()>1){
+                    List<HumanMedia> humanMediaShow = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlag(human.getHumanID(),0,1,1);
+                    if(humanMediaShow!=null && humanMediaShow.size()>0){
+                        for(HumanMedia media:humanMediaShow){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.delMedia(media);
+                        }
                     }
                 }
                 HumanMedia humanMedia = new HumanMedia();
@@ -409,6 +425,7 @@ public class ManagerController {
                 humanMedia.setSchoolID(human.getSchoolID());
                 humanMedia.setHumanID(human.getHumanID());
                 humanMedia.setCheckFlag(1);
+                humanMedia.setShowFlag(1);
                 //humanMedia.setCheckFlag(0);
                 humanMediaService.addMedia(humanMedia);
                 resultInfo.addData("media","images/"+photoName);
@@ -550,6 +567,9 @@ public class ManagerController {
             resultInfo.setMessage("新增失败，该人员已存在。");
             resultInfo.setSuccess(false);
             return resultInfo;*/
+            addHuman.setManagerFlag(1);
+            addHuman.setManagerType(managerType);
+            addHuman=humanInfoService.editHumans(addHuman);
         }else{
             addHuman = new HumanInfo();
             addHuman.setHumanName(humanName);
@@ -595,7 +615,11 @@ public class ManagerController {
                 addHuman=humanInfoService.saveHuman(addHuman);
                 parenStudentRel.setCheckFlag(1);
             }else if(applyHuman.getManagerType()==4){
-                addHuman.setCheckFlag(0);
+                if(addHuman.getManagerType()!=null && addHuman.getManagerType()==5){
+                    addHuman.setCheckFlag(1);
+                }else{
+                    addHuman.setCheckFlag(0);
+                }
                 addHuman=humanInfoService.saveHuman(addHuman);
                 parenStudentRel.setCheckFlag(0);
             }else if(applyHuman.getManagerType()==5){//家长主帐号
@@ -615,23 +639,7 @@ public class ManagerController {
             }
 
 
-            if(relHumanlistID!=null && relHumanlistID.size()>0){//新增人员关系
-                for(int i=0;i<relHumanlistID.size();i++){
-                    if(relHumanlistID.get(i)!=null){
-                        List<ParenStudentRel> rellist = pareStudentRelService.
-                                findByHomeIDAndHumanID(relHumanlistID.get(i),addHuman.getHumanID());
-                        if(rellist==null || rellist.size()==0){
-                            parenStudentRel.setHomeID(relHumanlistID.get(i));
-                            parenStudentRel.setHumanID(addHuman.getHumanID());
-                            parenStudentRel.setSchoolID(addHuman.getSchoolID());
-                            pareStudentRelService.addHumanRel(parenStudentRel);
-                        }
-                    }
 
-
-                }
-
-            }
         }
 
 
@@ -685,12 +693,43 @@ public class ManagerController {
 
                 JSONArray jsonObject = JSONArray.fromObject(feature);
                 String jsonFeature = jsonObject.toString();
-                
-                List<HumanMedia> humanMediaList = humanMediaService.findByHumanIDAndDeleteFlag(addHuman.getHumanID(),0);
-                if(humanMediaList!=null && humanMediaList.size()>0){
-                    for(HumanMedia humanMedia:humanMediaList){
-                        humanMedia.setDeleteFlag(1);
-                        humanMediaService.delMedia(humanMedia);
+
+                if(addHuman.getCheckFlag()==1){
+                    List<HumanMedia> humanMediaListc = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlag(addHuman.getHumanID(),0,0);
+                    if(humanMediaListc!=null && humanMediaListc.size()>0 ){
+                        for(HumanMedia humanMedia1:humanMediaListc){
+                            humanMedia1.setCheckFlag(1);
+                            humanMediaService.editMedia(humanMedia1);
+                        }
+                    }
+                }
+
+
+
+                List<HumanMedia> humanMediaList = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlag(addHuman.getHumanID(),0,1);
+
+                if(humanMediaList!=null && humanMediaList.size()==1){
+                    if(humanMediaList.get(0).getFeature()==null){
+                        for(HumanMedia media:humanMediaList){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.setMediaShow(media);
+                        }
+                    }else{
+                        for(HumanMedia media:humanMediaList){
+                            media.setShowFlag(0);
+                            humanMediaService.setMediaShow(media);
+                        }
+                    }
+
+                }else if(humanMediaList!=null && humanMediaList.size()>1){
+                    List<HumanMedia> humanMediaShow = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlag(addHuman.getHumanID(),0,1,1);
+                    if(humanMediaShow!=null && humanMediaShow.size()>0){
+                        for(HumanMedia media:humanMediaShow){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.delMedia(media);
+                        }
                     }
                 }
 
@@ -705,9 +744,53 @@ public class ManagerController {
                 }else{
                     humanMedia.setCheckFlag(0);
                 }
-
+                humanMedia.setShowFlag(1);
                 humanMediaService.addMedia(humanMedia);
             }
+        }
+
+        if(relHumanlistID!=null && relHumanlistID.size()>0){//新增人员关系
+            for(int i=0;i<relHumanlistID.size();i++){
+                if(relHumanlistID.get(i)!=null){
+                    List<ParenStudentRel> rellist = pareStudentRelService.
+                            findByHomeIDAndHumanID(relHumanlistID.get(i),addHuman.getHumanID());
+                    if(rellist==null || rellist.size()==0){
+                        HumanInfo human = humanInfoService.findByHumanID(relHumanlistID.get(i));
+                        if(human!=null){
+                            if(human.getManagerType()==5){
+                                parenStudentRel.setHomeID(relHumanlistID.get(i));
+                                parenStudentRel.setHumanID(addHuman.getHumanID());
+                                parenStudentRel.setSchoolID(addHuman.getSchoolID());
+                                pareStudentRelService.addHumanRel(parenStudentRel);
+                            }else if(addHuman.getManagerType()==5){
+                                parenStudentRel.setHumanID(relHumanlistID.get(i));
+                                parenStudentRel.setHomeID(addHuman.getHumanID());
+                                parenStudentRel.setSchoolID(addHuman.getSchoolID());
+                                pareStudentRelService.addHumanRel(parenStudentRel);
+                            }else{
+                                resultInfo.setSuccess(false);
+                                resultInfo.setCode(400);
+                                resultInfo.setMessage("关系绑定失败！");
+
+                                return resultInfo;
+                            }
+                        }
+
+                    }else if(rellist!=null && rellist.size()>0){
+                        if(parenStudentRel.getCheckFlag()==1){
+                            for(ParenStudentRel parenStudentRel1:rellist){
+                                if(parenStudentRel1.getCheckFlag()==0){
+                                    parenStudentRel1.setCheckFlag(1);
+                                    pareStudentRelService.editHumanRel(parenStudentRel1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
         }
 
         resultInfo.setSuccess(true);
@@ -853,8 +936,11 @@ public class ManagerController {
             return resultInfo;*/
             if(addHuman.getCheckFlag()==0){
             	addHuman.setCheckFlag(1);
-                humanInfoService.editHuman(addHuman);
+
             }
+            addHuman.setManagerFlag(1);
+            addHuman.setManagerType(managerType);
+            addHuman=humanInfoService.editHumans(addHuman);
             
         }else{
             addHuman = new HumanInfo();
@@ -919,35 +1005,7 @@ public class ManagerController {
             
         }
         
-        if(relHumanlistID!=null && relHumanlistID.size()>0){//新增人员关系
-            for(int i=0;i<relHumanlistID.size();i++){
-                if(relHumanlistID.get(i)!=null){
-                    List<ParenStudentRel> rellist = pareStudentRelService.
-                            findByHomeIDAndHumanID(relHumanlistID.get(i),addHuman.getHumanID());
-                    if(rellist==null || rellist.size()==0){
-                    	HumanInfo human = humanInfoService.findByHumanID(relHumanlistID.get(i));
-                    	ParenStudentRel parenStudentRel = new ParenStudentRel();
-                    	parenStudentRel.setCheckFlag(1);
-                    	if(human.getManagerType()==5){
-                    		parenStudentRel.setHomeID(relHumanlistID.get(i));
-                            parenStudentRel.setHumanID(addHuman.getHumanID());
-                            //parenStudentRel.setSchoolID(addHuman.getSchoolID());
-                    	}else if(addHuman.getManagerType()==5){
-                    		parenStudentRel.setHumanID(relHumanlistID.get(i));
-                            parenStudentRel.setHomeID(addHuman.getHumanID());
-                    	}else{
-                    		message="新增成功，但关系绑定失败，绑定中没有家长主帐号！";
-                    	}
-                    	
-                    	
-                        pareStudentRelService.addHumanRel(parenStudentRel);
-                    }
-                }
 
-
-            }
-
-        }
 
 
         
@@ -1000,10 +1058,21 @@ public class ManagerController {
 
                 JSONArray jsonObject = JSONArray.fromObject(feature);
                 String jsonFeature = jsonObject.toString();
-                
-                List<HumanMedia> humanMediaList = humanMediaService.findByHumanIDAndDeleteFlag(addHuman.getHumanID(),0);
-                if(humanMediaList!=null && humanMediaList.size()>0){
-                    for(HumanMedia humanMedia:humanMediaList){
+
+                if(addHuman.getCheckFlag()==1){
+                    List<HumanMedia> humanMediaListc = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlag(addHuman.getHumanID(),0,0);
+                    if(humanMediaListc!=null && humanMediaListc.size()>0 ){
+                        for(HumanMedia humanMedia1:humanMediaListc){
+                            humanMedia1.setCheckFlag(1);
+                            humanMediaService.editMedia(humanMedia1);
+                        }
+                    }
+                }
+
+                List<HumanMedia> humanMediaList = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlagOrderByCreateTimeDesc(addHuman.getHumanID(),0,1,0);
+                if(humanMediaList!=null && humanMediaList.size()>2){
+                    for(int i=2;i< humanMediaList.size();i++){
+                        HumanMedia humanMedia = humanMediaList.get(i);
                         humanMedia.setDeleteFlag(1);
                         humanMediaService.delMedia(humanMedia);
                     }
@@ -1020,9 +1089,61 @@ public class ManagerController {
                 }else{
                     humanMedia.setCheckFlag(0);
                 }
+                List<HumanMedia> humanMediaShow = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlag(addHuman.getHumanID(),0,1,1);
+                if(humanMediaShow==null || humanMediaShow.size()==0){
+                    humanMedia.setShowFlag(1);
+                }else if(humanMediaShow.size()==1 && humanMediaShow.get(0).getFeature()==null){
+                    humanMedia.setShowFlag(1);
+                    HumanMedia humanShow = humanMediaShow.get(0);
+                    humanShow.setDeleteFlag(1);
+                    humanShow.setShowFlag(0);
+                    humanMediaService.delMedia(humanShow);
+                }
 
                 humanMediaService.addMedia(humanMedia);
             }
+        }
+
+        if(relHumanlistID!=null && relHumanlistID.size()>0){//新增人员关系
+            for(int i=0;i<relHumanlistID.size();i++){
+                if(relHumanlistID.get(i)!=null){
+                    List<ParenStudentRel> rellist = pareStudentRelService.
+                            findByHomeIDAndHumanID(relHumanlistID.get(i),addHuman.getHumanID());
+                    if(rellist==null || rellist.size()==0){
+                        HumanInfo human = humanInfoService.findByHumanID(relHumanlistID.get(i));
+                        ParenStudentRel parenStudentRel = new ParenStudentRel();
+                        parenStudentRel.setCheckFlag(1);
+                        if(human.getManagerType()==5){
+                            parenStudentRel.setHomeID(relHumanlistID.get(i));
+                            parenStudentRel.setHumanID(addHuman.getHumanID());
+                            pareStudentRelService.addHumanRel(parenStudentRel);
+                            //parenStudentRel.setSchoolID(addHuman.getSchoolID());
+                        }else if(addHuman.getManagerType()==5){
+                            parenStudentRel.setHumanID(relHumanlistID.get(i));
+                            parenStudentRel.setHomeID(addHuman.getHumanID());
+                            pareStudentRelService.addHumanRel(parenStudentRel);
+                        }else{
+                            message="关系绑定失败！";
+                            resultInfo.setSuccess(false);
+                            resultInfo.setCode(400);
+                            resultInfo.setMessage(message);
+                            return resultInfo;
+                        }
+                    }else if(rellist!=null && rellist.size()>0){
+                        if(addHuman.getCheckFlag()==1){
+                            for(ParenStudentRel parenStudentRel1:rellist){
+                                if(parenStudentRel1.getCheckFlag()==0){
+                                    parenStudentRel1.setCheckFlag(1);
+                                    pareStudentRelService.editHumanRel(parenStudentRel1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
         }
 
         resultInfo.setSuccess(true);
@@ -1171,10 +1292,13 @@ public class ManagerController {
         int humanExist = 0;
         if(addHuman!=null){
             humanExist=1;
-            resultInfo.setCode(400);
+            /*resultInfo.setCode(400);
             resultInfo.setMessage("新增失败，该人员已存在。");
             resultInfo.setSuccess(false);
-            return resultInfo;
+            return resultInfo;*/
+            addHuman.setManagerFlag(1);
+            addHuman.setManagerType(managerType);
+            addHuman=humanInfoService.editHumans(addHuman);
         }else{
             addHuman = new HumanInfo();
             addHuman.setHumanName(humanName);
@@ -1206,30 +1330,21 @@ public class ManagerController {
             addHuman=humanInfoService.saveHuman(addHuman);
             parenStudentRel.setCheckFlag(1);
         }else if(applyHuman.getManagerType()==4){
-            addHuman.setCheckFlag(0);
+            if(addHuman.getManagerType()!=null && addHuman.getManagerType()==5){
+                addHuman.setCheckFlag(1);
+            }else{
+                addHuman.setCheckFlag(0);
+            }
             addHuman=humanInfoService.saveHuman(addHuman);
             parenStudentRel.setCheckFlag(0);
+        }else if(applyHuman.getManagerType()==2){
+            addHuman.setCheckFlag(1);
+            addHuman=humanInfoService.saveHuman(addHuman);
+            parenStudentRel.setCheckFlag(1);
         }
 
 
-
-        if(relHumanlistID!=null && relHumanlistID.size()>0){//新增人员关系
-            for(int i=0;i<relHumanlistID.size();i++){
-                if(relHumanlistID.get(i)!=null){
-                    List<ParenStudentRel> rellist = pareStudentRelService.
-                            findByHomeIDAndHumanID(relHumanlistID.get(i),addHuman.getHumanID());
-                    if(rellist==null || rellist.size()==0){
-                        parenStudentRel.setHomeID(relHumanlistID.get(i));
-                        parenStudentRel.setHumanID(addHuman.getHumanID());
-                        parenStudentRel.setSchoolID(applyHuman.getSchoolID());
-                        pareStudentRelService.addHumanRel(parenStudentRel);
-                    }
-                }
-            }
-
-        }
-
-        if(humanExist==0 && img!=null && img!="" && !img.equals("")){
+        if(img!=null && img!="" && !img.equals("")){
             Base64Img base64Img = new Base64Img();
             String property = System.getProperty("user.dir");
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
@@ -1278,6 +1393,41 @@ public class ManagerController {
                 JSONArray jsonObject = JSONArray.fromObject(feature);
                 String jsonFeature = jsonObject.toString();
 
+                if(addHuman.getCheckFlag()==1){
+                    List<HumanMedia> humanMediaListc = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlag(addHuman.getHumanID(),0,0);
+                    if(humanMediaListc!=null && humanMediaListc.size()>0 ){
+                        for(HumanMedia humanMedia1:humanMediaListc){
+                            humanMedia1.setCheckFlag(1);
+                            humanMediaService.editMedia(humanMedia1);
+                        }
+                    }
+                }
+
+                List<HumanMedia> humanMediaList = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlag(addHuman.getHumanID(),0,1);
+                if(humanMediaList!=null && humanMediaList.size()==1){
+                    if(humanMediaList.get(0).getFeature()==null){
+                        for(HumanMedia media:humanMediaList){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.setMediaShow(media);
+                        }
+                    }else{
+                        for(HumanMedia media:humanMediaList){
+                            media.setShowFlag(0);
+                            humanMediaService.setMediaShow(media);
+                        }
+                    }
+                }else if(humanMediaList!=null && humanMediaList.size()>1){
+                    List<HumanMedia> humanMediaShow = humanMediaService.findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlag(addHuman.getHumanID(),0,1,1);
+                    if(humanMediaShow!=null && humanMediaShow.size()>0){
+                        for(HumanMedia media:humanMediaShow){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.delMedia(media);
+                        }
+                    }
+                }
+
                 HumanMedia humanMedia = new HumanMedia();
                 humanMedia.setUpdateTime(new Date());
                 humanMedia.setMediaPath("images/"+photoName);
@@ -1289,9 +1439,50 @@ public class ManagerController {
                 }else{
                     humanMedia.setCheckFlag(0);
                 }
+                humanMedia.setShowFlag(1);
 
                 humanMediaService.addMedia(humanMedia);
             }
+        }
+
+        if(relHumanlistID!=null && relHumanlistID.size()>0){//新增人员关系
+            for(int i=0;i<relHumanlistID.size();i++){
+                if(relHumanlistID.get(i)!=null){
+                    List<ParenStudentRel> rellist = pareStudentRelService.
+                            findByHomeIDAndHumanIDAndDeleteFlag(relHumanlistID.get(i),addHuman.getHumanID(),0);
+                    if(rellist==null || rellist.size()==0){
+                        HumanInfo human = humanInfoService.findByHumanID(relHumanlistID.get(i));
+                        if(human.getManagerType()==5){
+                            parenStudentRel.setHomeID(relHumanlistID.get(i));
+                            parenStudentRel.setHumanID(addHuman.getHumanID());
+                            parenStudentRel.setSchoolID(applyHuman.getSchoolID());
+                            pareStudentRelService.addHumanRel(parenStudentRel);
+                        }else if(addHuman.getManagerType()==5){
+                            parenStudentRel.setHumanID(relHumanlistID.get(i));
+                            parenStudentRel.setHomeID(addHuman.getHumanID());
+                            parenStudentRel.setSchoolID(applyHuman.getSchoolID());
+                            pareStudentRelService.addHumanRel(parenStudentRel);
+                        }else{
+                            resultInfo.setSuccess(false);
+                            resultInfo.setCode(400);
+                            resultInfo.setMessage("关系绑定失败！");
+
+                            return resultInfo;
+                        }
+
+                    }else if(rellist!=null && rellist.size()>0){
+                        if(parenStudentRel.getCheckFlag()==1){
+                            for(ParenStudentRel parenStudentRel1:rellist){
+                                if(parenStudentRel1.getCheckFlag()==0){
+                                    parenStudentRel1.setCheckFlag(1);
+                                    pareStudentRelService.editHumanRel(parenStudentRel1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         resultInfo.setSuccess(true);
@@ -1455,6 +1646,7 @@ public class ManagerController {
             humanMedia.setSchoolID(human.getSchoolID());
             humanMedia.setHumanID(human.getHumanID());
             humanMedia.setCheckFlag(0);
+            humanMedia.setShowFlag(1);
             humanMediaService.addMedia(humanMedia);
         }
 
@@ -1532,6 +1724,18 @@ public class ManagerController {
                         pareStudentRelService.editHumanRel(parenStudentRel);
                     }
 
+                    List<HumanMedia> humanMediaShow1 = humanMediaService.
+                            findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlag(human.getHumanID(),0,0,1);
+
+                    List<HumanMedia> humanMediaShow = humanMediaService.
+                            findByHumanIDAndDeleteFlagAndCheckFlagAndShowFlag(human.getHumanID(),0,1,1);
+                    if(humanMediaShow1!=null && humanMediaShow1.size()>0 && humanMediaShow!=null && humanMediaShow.size()>0){
+                        for(HumanMedia media:humanMediaShow){
+                            media.setShowFlag(0);
+                            media.setDeleteFlag(1);
+                            humanMediaService.delMedia(media);
+                        }
+                    }
                     List<HumanMedia> humanMediaList = humanMediaService.
                             findByHumanIDAndDeleteFlagAndCheckFlag(human.getHumanID(),0,0);
                     if(humanMediaList!=null && humanMediaList.size()>0){
@@ -1541,6 +1745,7 @@ public class ManagerController {
                             humanMediaService.editMedia(humanMedia);
                         }
                     }
+
 
                 }
             }

@@ -6,10 +6,7 @@ package com.deliver.mapbody;
 public class DeliverRecordParam {
     private String humanName;
     private Integer accessType;
-    private Integer deliverType;
-    private Integer schoolID;
-    private Integer gradeID;
-    private Integer classID;
+
     private Integer humanType;
     private String beginTime;
     private String endTime;
@@ -29,38 +26,6 @@ public class DeliverRecordParam {
 
     public void setAccessType(Integer accessType) {
         this.accessType = accessType;
-    }
-
-    public Integer getDeliverType() {
-        return deliverType;
-    }
-
-    public void setDeliverType(Integer deliverType) {
-        this.deliverType = deliverType;
-    }
-
-    public Integer getSchoolID() {
-        return schoolID;
-    }
-
-    public void setSchoolID(Integer schoolID) {
-        this.schoolID = schoolID;
-    }
-
-    public Integer getGradeID() {
-        return gradeID;
-    }
-
-    public void setGradeID(Integer gradeID) {
-        this.gradeID = gradeID;
-    }
-
-    public Integer getClassID() {
-        return classID;
-    }
-
-    public void setClassID(Integer classID) {
-        this.classID = classID;
     }
 
     public Integer getHumanType() {

@@ -11,16 +11,20 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name="tc_dic_manager_type")
-public class ManagerType extends BaseObject implements Serializable {
+@Table(name="tc_human_media")
+public class HumanMedia extends BaseObject implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Integer mediaID;
 
     @Column(nullable=true)
-    private Integer managerType;
-    @Column(length = 20,nullable=true)
-    private String managerTypeName;
+    private Integer humanID;
+
+    @Column(length = 300,nullable=true)
+    private String mediaPath; //图片路径
+
+    @Column(length = 3000,nullable=true)
+    private String feature;
     @Column(nullable=true)
     private Date createTime;
     @Column(nullable=true)
@@ -30,28 +34,39 @@ public class ManagerType extends BaseObject implements Serializable {
     @Column(nullable=true)
     private String remarks;
 
-    public Integer getId() {
-        return id;
+    @Column(nullable=true)
+    private Integer schoolID;
+
+    public Integer getMediaID() {
+        return mediaID;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setMediaID(Integer mediaID) {
+        this.mediaID = mediaID;
     }
 
-    public Integer getManagerType() {
-        return managerType;
+    public Integer getHumanID() {
+        return humanID;
     }
 
-    public void setManagerType(Integer managerType) {
-        this.managerType = managerType;
+    public void setHumanID(Integer humanID) {
+        this.humanID = humanID;
     }
 
-    public String getManagerTypeName() {
-        return managerTypeName;
+    public String getMediaPath() {
+        return mediaPath;
     }
 
-    public void setManagerTypeName(String managerTypeName) {
-        this.managerTypeName = managerTypeName;
+    public void setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
+    }
+
+    public String getFeature() {
+        return feature;
+    }
+
+    public void setFeature(String feature) {
+        this.feature = feature;
     }
 
     public Date getCreateTime() {
@@ -86,16 +101,26 @@ public class ManagerType extends BaseObject implements Serializable {
         this.remarks = remarks;
     }
 
+    public Integer getSchoolID() {
+        return schoolID;
+    }
+
+    public void setSchoolID(Integer schoolID) {
+        this.schoolID = schoolID;
+    }
+
     @Override
     public String toString() {
-        return "ManagerType{" +
-                "id=" + id +
-                ", managerType=" + managerType +
-                ", managerTypeName='" + managerTypeName + '\'' +
+        return "HumanMedia{" +
+                "mediaID=" + mediaID +
+                ", humanID=" + humanID +
+                ", mediaPath='" + mediaPath + '\'' +
+                ", feature='" + feature + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", deleteFlag=" + deleteFlag +
                 ", remarks='" + remarks + '\'' +
+                ", schoolID=" + schoolID +
                 '}';
     }
 }
